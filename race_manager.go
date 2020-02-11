@@ -104,7 +104,7 @@ func (rm *RaceManager) applyConfigAndStart(event RaceEvent) error {
 	raceConfig := event.GetRaceConfig()
 	entryList := event.GetEntryList()
 
-	if config.Lua.Enabled && IsPremium == "true" {
+	if config.Lua.Enabled && Premium() {
 		err = eventStartPlugin(&raceConfig, serverOpts, &entryList)
 
 		if err != nil {
@@ -644,6 +644,12 @@ func (rm *RaceManager) BuildCustomRaceFromForm(r *http.Request) (*CurrentRaceCon
 			// This is probably a bit hacky, and may need removing with a future Sol update
 			startTimeFinal := startTime.Add(-(time.Duration(timeMultiInt) * 5 * time.Hour))
 
+			unixTime := time.Unix(0, 0)
+
+			if startTimeFinal.Before(unixTime) {
+				startTimeFinal = unixTime
+			}
+
 			raceConfig.AddWeather(&WeatherConfig{
 				Graphics: weatherName + "_type=" + strconv.Itoa(WFXType) + "_time=0_mult=" +
 					timeMulti + "_start=" + strconv.Itoa(int(startTimeFinal.Unix())),
@@ -941,7 +947,7 @@ func (rm *RaceManager) BuildRaceOpts(r *http.Request) (*RaceTemplateVars, error)
 
 	// default sol time to now
 	for _, weather := range race.CurrentRaceConfig.Weather {
-		if weather.CMWFXDate == 0 {
+		if weather.CMWFXDate <= 0 {
 			weather.CMWFXDate = int(time.Now().Unix())
 			weather.CMWFXDateUnModified = int(time.Now().Unix())
 		}
@@ -1151,7 +1157,7 @@ func (rm *RaceManager) ScheduleRace(uuid string, date time.Time, action string, 
 			}
 		}
 
-		if config.Lua.Enabled && IsPremium == "true" {
+		if config.Lua.Enabled && Premium() {
 			err = eventSchedulePlugin(race)
 
 			if err != nil {
@@ -1299,7 +1305,7 @@ func (rm *RaceManager) ToggleLoopCustomRace(uuid string) error {
 	}
 
 	if race.LoopServer == nil {
-		race.LoopServer = make(map[string]bool)
+		race.LoopServer = make(map[ServerID]bool)
 	}
 
 	race.LoopServer[serverID] = !race.LoopServer[serverID]

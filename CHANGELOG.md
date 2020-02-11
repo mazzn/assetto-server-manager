@@ -1,3 +1,34 @@
+v1.7.3
+------
+
+Added:
+
+* ACSR Ratings are now shown in ACSR enabled Championships, in Driver Standings, the Entrants tables and the Sign Up form responses (including the CSV export).
+* You can now download Server Logs from Server Manager (thanks @mazzn!)
+* You can now run Open Championships with ACSR integration!
+* Server Manager now logs the output of the acServer executable to the logs folder inside your Server Install Path. You can configure this in Server Options -> Miscellaneous
+* In a Multi-Server environment, you can now set different account groups per server, for example you could set an Account to have "Write" access on one server and "Delete" access on another.
+* Added a new permission - "No Access" - which blocks a user from doing anything on a server.
+* Open weather API Lua plugin can now automatically find the location of the track (so long as the track json file contains this information) and set the weather accordingly! Thanks to @mike855 for this contribution!
+
+Fixes:
+
+* On Windows, batch files are now stopped correctly by Server Manager.
+* Fixes an issue where Championship Class IDs could overlap causing Multi-class championships to incorrectly report standings.
+* Fixes an issue where Championship and Race Weekend exports on Firefox would not export with their full name.
+* Fixes an issue where Championship/Race Weekend sessions could not be cancelled if the server is not running.
+* Fixes an issue where Race Weekend Race sessions would have their wait time forced to 120 seconds.
+* Fixes an issue where the progress of a Championship with Race Weekends would be incorrectly reported on the Championship List page.
+* Fixes an issue where Championship attendance would not work correctly for event with Race Weekends.
+* Fixes an issue where watching content folder for changes could cause a crash on Windows.
+* The Championship Entrant table is now sorted alphabetically.
+* Championship Event Pitbox overrides are now applied correctly on Championships with Sign Up forms enabled.
+* Fixes an issue where Sol dates could be set to dates before 1st January 1970, leading to a Shaders Patch crash on game launch. Dates before 01/01/1970 are now set to 01/01/1970.
+
+Removed:
+
+* Removed max limit of Damage Multiplier (was 100%). Happy crashing!
+
 v1.7.2
 ------
 

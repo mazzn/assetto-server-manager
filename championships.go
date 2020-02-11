@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/JustaPenguin/assetto-server-manager/pkg/udp"
+
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -241,6 +242,10 @@ func (c *Championship) FindLastResultForDriver(guid string) (out *SessionResult,
 
 func (c *Championship) GetPlayerSummary(guid string) string {
 	if c.Progress() == 0 {
+		if len(c.Events) <= 1 {
+			return ""
+		}
+
 		return "This is the first event of the Championship!"
 	}
 
@@ -635,7 +640,7 @@ func (c *Championship) AllEntrants() EntryList {
 func (c *Championship) EntrantAttendance(guid string) int {
 	i := 0
 
-	for _, event := range c.Events {
+	for _, event := range ExtractRaceWeekendSessionsIntoIndividualEvents(c.Events) {
 		if event.Completed() {
 			for _, class := range c.Classes {
 				standings := class.StandingsForEvent(event)
@@ -655,7 +660,7 @@ func (c *Championship) EntrantAttendance(guid string) int {
 func (c *Championship) NumCompletedEvents() int {
 	i := 0
 
-	for _, event := range c.Events {
+	for _, event := range ExtractRaceWeekendSessionsIntoIndividualEvents(c.Events) {
 		if event.Completed() {
 			i++
 		}
@@ -1015,9 +1020,9 @@ func (c *ChampionshipClass) standings(events []*ChampionshipEvent, givePoints fu
 
 				if !ok {
 					logrus.Warnf("Could not find points for Race Weekend Session class: %s", c.ID)
+				} else {
+					points = *classPoints
 				}
-
-				points = *classPoints
 			} else {
 				switch sessionType {
 				case SessionTypeQualifying:

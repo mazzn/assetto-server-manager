@@ -507,7 +507,7 @@ type RaceWeekendSession struct {
 	StartedTime                time.Time
 	CompletedTime              time.Time
 	ScheduledTime              time.Time
-	ScheduledServerID          string
+	ScheduledServerID          ServerID
 	Results                    *SessionResults
 	StartWhenParentHasFinished bool
 
@@ -643,7 +643,7 @@ func (rws *RaceWeekendSession) FinishingGrid(raceWeekend *RaceWeekend) ([]*RaceW
 				}
 			}
 
-			if !foundEntrant && entrant.Car.GetGUID() != "" {
+			if !foundEntrant && entrant.Car.GetGUID() != "" && (rws.IsBase() || !entrant.IsPlaceholder) {
 				if raceWeekend.HasLinkedChampionship() {
 					// find the class ID for the car
 					class, err := raceWeekend.Championship.FindClassForCarModel(entrant.Car.GetCar())
